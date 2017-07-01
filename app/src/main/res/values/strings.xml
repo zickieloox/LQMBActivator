@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">LQMB Activator</string>
+    <string name="item_exit">Exit</string>
+    <string name="title_activation">Activation</string>
+    <string name="title_info">Info</string>
+    <string name="title_installation">Installation</string>
+    <string name="btn_launch">Launch</string>
+    <string name="tv_lqmb">Liên Quân Mobile</string>
+    <string name="btn_uninstall">Uninstall</string>
+    <string name="tv_not_installed">LQMB is not installed.</string>
+    <string name="toast_not_enough">Your free space in this device is not enough to install, this needs more than 900MB. Current:\u0020</string>
+    <string name="btn_not_installed">Not Installed</string>
+    <string name="rationale_message">This app needs Phone and Storage permissions.</string>
+    <string name="denied_message"><![CDATA[If you reject permission, you can not use this function. Please turn on permissions at [Setting] > [Permission]]]></string>
+    <string name="btn_go_settings">Go Settings</string>
+    <string name="toast_perm_denied">Permission Denied</string>
+    <string name="btn_install">Install</string>
+    <string name="tv_copying_data">Copying Hacked Data…</string>
+    <string name="tv_hacking_map">Hacking Map And Anti-ban…</string>
+    <string name="tv_done">Done!</string>
+    <string name="tv_install_lqmb">Installing LQMB…</string>
+    <string name="tv_not_hacked">This Game Is Not Hacked.</string>
+    <string name="tv_hacked">This Game Is Hacked.</string>
+    <string name="toast_grant_install">Grant to install</string>
+    <string name="tv_searching_file">Searching For \"lqmb.zic\"…</string>
+    <string name="tv_not_found">File \"lqmb.zic\" Was Not Found. Please Download It And Retry.</string>
+    <string name="toast_code_copied">Activation Code Copied.</string>
+    <string name="tv_not_activated">Hit the code to copy it and then contact: fb.com/leeryal to active.</string>
+    <string name="tv_join_group">Join our FB Hack Map group: https://www.facebook.com/groups/292094057881113</string>
+    <string name="tv_activated">Activated!</string>
+    <string name="toast_check_internet">Please check your internet connection!</string>
+    <string name="ad_unit_banner">ca-app-pub-1603834578752860/1950034830</string>
+    <string name="ad_unit_interstitial">ca-app-pub-1603834578752860/7577766031</string>
+    <string name="btn_join">Join</string>
+    <string name="btn_send">Send</string>
+</resources>

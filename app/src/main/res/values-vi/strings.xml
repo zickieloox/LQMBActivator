@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LQMB Activator</string>
+    <string name="btn_launch">Khởi chạy</string>
+    <string name="btn_uninstall">Gỡ Bỏ</string>
+    <string name="item_exit">Thoát</string>
+    <string name="title_activation">Kích Hoạt</string>
+    <string name="title_info">Thông Tin</string>
+    <string name="title_installation">Thiết Lập</string>
+    <string name="tv_lqmb">Liên Quân Mobile</string>
+    <string name="tv_not_installed">LQMB chưa được cài đặt.</string>
+    <string name="toast_not_enough">"Bộ nhớ trống của bạn không đủ để cài đặt, cần hơn 900MB. Hiện tại trống: "</string>
+    <string name="btn_not_installed">Chưa Cài</string>
+    <string name="rationale_message">Ứng dụng này cần quyền truy cập vào Bộ nhớ và Điện thoại.</string>
+    <string name="btn_go_settings">Vào Cài Đặt</string>
+    <string name="denied_message"><![CDATA[Nếu bạn từ chối, bạn sẽ không thể sử dụng chức năng này. Xin hãy cho phép tại [Setting] > [Permission]]]></string>
+    <string name="toast_perm_denied">Bị Từ Chối</string>
+    <string name="btn_install">Cài đặt</string>
+    <string name="tv_copying_data">Đang Sao Chép Dữ Liệu…</string>
+    <string name="tv_done">Hoàn Thành!</string>
+    <string name="tv_hacking_map">Đang Tiến Hành Hack Map Và Anti-ban…</string>
+    <string name="tv_install_lqmb">Đang cài đặt LQMB…</string>
+    <string name="toast_grant_install">Chấp nhận cài đặt</string>
+    <string name="tv_hacked">Phiên Bản Hiện Tại Đã Được Hack.</string>
+    <string name="tv_not_hacked">Phiên Bản Hiện Tại Chưa Được Hack.</string>
+    <string name="tv_searching_file">Đang Tìm Kiếm File \"lqmb.zic\"…</string>
+    <string name="tv_not_found">File \"lqmb.zic\" Không Được Tìm Thấy, Bạn Hãy Tải Về Và Thử Lại.</string>
+    <string name="toast_code_copied">Đã Copy Mã Kích Hoạt.</string>
+    <string name="tv_not_activated">Nhẫn vào mã để copy sau đó liên hệ: fb.com/leeryal để gửi mã và kích hoạt.</string>
+    <string name="tv_join_group">Tham gia nhóm Facebook: Hack Map Liên Quân Mobile - Kết Bạn Troll Rank\nhttps://www.facebook.com/groups/292094057881113</string>
+    <string name="tv_activated">Activated!</string>
+    <string name="toast_check_internet">Xin vui lòng kiểm tra lại đường truyền internet!</string>
+    <string name="btn_join">Tham Gia</string>
+    <string name="btn_send">Gửi</string>
+    <string name="ad_unit_banner">ca-app-pub-1603834578752860/1950034830</string>
+    <string name="ad_unit_interstitial">ca-app-pub-1603834578752860/7577766031</string>
+</resources>
