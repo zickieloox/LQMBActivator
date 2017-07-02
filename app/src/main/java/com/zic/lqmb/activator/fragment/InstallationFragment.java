@@ -36,7 +36,7 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
     private static final String TAG = "InstallationFragment";
     private static final String LQMB_PACKAGE_NAME = "com.garena.game.kgvn";
     private static final String HACK_FILE_NAME = "lqmb.zic";
-    private static final String HACK_FILE_MD5 = "4da986db746515f07d6af90831bccf1a";
+    private static final String HACK_FILE_MD5 = "4baf3cbb2eb41263b241ee04cf330313";
 
     private PermissionListener permissionListener;
     private ProgressView proviewInstall;
@@ -173,19 +173,19 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
 
             publishProgress(getString(R.string.tv_copying_data));
 
-            ZipUtil.unpack(new File(hackFilePath), new File(sdcard + "/Android"), new NameMapper() {
+            ZipUtil.unpack(new File(hackFilePath), new File(sdcard), new NameMapper() {
                 public String map(String name) {
-                    return name.startsWith("obb/") ? name : null;
+                    return name.startsWith("Android/") ? name : null;
                 }
             });
 
             publishProgress(getString(R.string.tv_hacking_map));
 
-            ZipUtil.unpack(new File(hackFilePath), new File(sdcard + "/Android"), new NameMapper() {
-                public String map(String name) {
-                    return name.startsWith("data/") ? name : null;
-                }
-            });
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             ZipUtil.unpackEntry(new File(hackFilePath), "com.garena.game.kgvn.apk", new File(sdcard + "/Android/com.garena.game.kgvn.apk"));
 
