@@ -7,14 +7,60 @@ import android.os.StatFs;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class FileUtils {
 
     private static final String TAG = "FileUtils";
     private static final int freeMegabytesToInstallLqmb = 900;
+
+    public static String getFileChecksum(File file) throws IOException {
+
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, "getFileChecksum: " + e.toString());
+        }
+
+        //Get file input stream for reading the file content
+        FileInputStream fis = new FileInputStream(file);
+
+        //Create byte array to read data in chunks
+        byte[] byteArray = new byte[1024];
+        int bytesCount = 0;
+
+        //Read file data and update in message digest
+        while ((bytesCount = fis.read(byteArray)) != -1) {
+            if (digest != null) {
+                digest.update(byteArray, 0, bytesCount);
+            }
+        }
+        fis.close();
+
+        //Get the hash's bytes
+        byte[] bytes = new byte[0];
+        if (digest != null) {
+            bytes = digest.digest();
+        }
+
+        //This bytes[] has bytes in decimal format;
+        //Convert it to hexadecimal format
+        StringBuilder sb = new StringBuilder();
+        for (byte aByte : bytes) {
+            sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+        }
+
+        //return complete hash
+        return sb.toString();
+    }
+
 
     public static void deleteFileOrDir(File fileOrDir) {
         if (fileOrDir.isDirectory())

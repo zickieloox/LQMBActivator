@@ -28,6 +28,7 @@ import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class InstallationFragment extends Fragment implements View.OnClickListener {
@@ -35,6 +36,7 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
     private static final String TAG = "InstallationFragment";
     private static final String LQMB_PACKAGE_NAME = "com.garena.game.kgvn";
     private static final String HACK_FILE_NAME = "lqmb.zic";
+    private static final String HACK_FILE_MD5 = "4da986db746515f07d6af90831bccf1a";
 
     private PermissionListener permissionListener;
     private ProgressView proviewInstall;
@@ -141,8 +143,6 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
             btnInstall.setEnabled(false);
             tvProgress.setText(getString(R.string.tv_searching_file));
             proviewInstall.setVisibility(View.VISIBLE);
-
-            super.onPreExecute();
         }
 
         @Override
@@ -154,6 +154,22 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
                 publishProgress(getString(R.string.tv_not_found));
                 cancel(true);
             }
+
+            publishProgress(getString(R.string.tv_checking_md5));
+
+            String md5 = null;
+            try {
+                md5 = FileUtils.getFileChecksum(new File(hackFilePath));
+            } catch (IOException e) {
+                Log.e(TAG, "getFileChecksum: " + e.toString());
+            }
+
+            assert md5 != null;
+            if (!md5.equalsIgnoreCase(HACK_FILE_MD5)) {
+                publishProgress(getString(R.string.tv_md5_invalid));
+                cancel(true);
+            }
+
 
             publishProgress(getString(R.string.tv_copying_data));
 
@@ -181,8 +197,9 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
                 e.printStackTrace();
             }
 
-            AppUtils.installApk(getActivity(), sdcard + "/Android/com.garena.game.kgvn.apk");
-
+            if (md5.equalsIgnoreCase(HACK_FILE_MD5)) {
+                AppUtils.installApk(getActivity(), sdcard + "/Android/com.garena.game.kgvn.apk");
+            }
             return null;
         }
 
@@ -190,8 +207,6 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
         protected void onProgressUpdate(String... values) {
 
             tvProgress.setText(values[0]);
-
-            super.onProgressUpdate(values);
         }
 
         @Override
@@ -200,8 +215,6 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
             Toast.makeText(getActivity(), getString(R.string.toast_grant_install), Toast.LENGTH_SHORT).show();
             tvProgress.setText(getString(R.string.tv_done));
             proviewInstall.setVisibility(View.INVISIBLE);
-
-            super.onPostExecute(aVoid);
         }
 
     }
