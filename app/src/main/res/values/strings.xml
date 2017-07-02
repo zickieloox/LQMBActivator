@@ -7,7 +7,7 @@
     <string name="btn_launch">Launch</string>
     <string name="tv_lqmb">Liên Quân Mobile</string>
     <string name="btn_uninstall">Uninstall</string>
-    <string name="tv_not_installed">LQMB is not installed.</string>
+    <string name="tv_not_installed">LQMB was not installed.</string>
     <string name="toast_not_enough">Your free space in this device is not enough to install, this needs more than 900MB. Current:\u0020</string>
     <string name="btn_not_installed">Not Installed</string>
     <string name="rationale_message">This app needs Phone and Storage permissions.</string>
@@ -36,4 +36,5 @@
     <string name="tv_checking_md5">Checking MD5 Checksum…</string>
     <string name="tv_md5_invalid">File \"lqmb.zic\" Is Invalid. Please Download  Again And Retry.</string>
     <string name="item_send_log">Send Log</string>
+    <string name="toats_not_install">Lien Quan Mobile was not installed!</string>
 </resources>

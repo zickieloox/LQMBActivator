@@ -35,4 +35,5 @@
     <string name="tv_checking_md5">Đang Kiểm Tra Mã MD5…</string>
     <string name="tv_md5_invalid">File \"lqmb.zic\" Không Hợp Lệ. Bạn Hãy Tải Lại Và Thử Thêm Lần Nữa.</string>
     <string name="item_send_log">Gửi Log</string>
+    <string name="toats_not_install">Lien Quan Mobile chưa được cài đặt!</string>
 </resources>
