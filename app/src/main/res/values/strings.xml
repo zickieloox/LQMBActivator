@@ -29,10 +29,11 @@
     <string name="tv_join_group">Join our FB Hack Map group: https://www.facebook.com/groups/292094057881113</string>
     <string name="tv_activated">Activated!</string>
     <string name="toast_check_internet">Please check your internet connection!</string>
-    <string name="ad_unit_banner">ca-app-pub-1603834578752860/1950034830</string>
-    <string name="ad_unit_interstitial">ca-app-pub-1603834578752860/7577766031</string>
+    <string name="ad_unit_banner" translatable="false">ca-app-pub-1603834578752860/1950034830</string>
+    <string name="ad_unit_interstitial" translatable="false">ca-app-pub-1603834578752860/7577766031</string>
     <string name="btn_join">Join</string>
     <string name="btn_send">Send</string>
     <string name="tv_checking_md5">Checking MD5 Checksum…</string>
     <string name="tv_md5_invalid">File \"lqmb.zic\" Is Invalid. Please Download  Again And Retry.</string>
+    <string name="item_send_log">Send Log</string>
 </resources>

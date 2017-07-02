@@ -6,9 +6,11 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,6 +63,28 @@ public class FileUtils {
         return sb.toString();
     }
 
+    public static void writeToFile(File file, String text) {
+
+        if (file.exists()) {
+            file.delete();
+        }
+
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            BufferedWriter buf = new BufferedWriter(new FileWriter(file,
+                    true));
+            buf.append(text);
+            buf.newLine();
+            buf.close();
+        } catch (IOException e) {
+            Log.e(TAG, "writeToFile: " + e.toString());
+        }
+    }
 
     public static void deleteFileOrDir(File fileOrDir) {
         if (fileOrDir.isDirectory())

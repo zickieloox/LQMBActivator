@@ -2,6 +2,9 @@ package com.zic.lqmb.activator.utils;
 
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -28,5 +31,24 @@ public class Utils {
             Log.e(TAG, "md5: " + e.toString());
             return "";
         }
+    }
+
+    public static String generateLog() {
+        StringBuilder log = new StringBuilder();
+        try {
+            Process process = Runtime.getRuntime().exec("logcat -d");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                log.append(line + "\n");
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "generateLog: " + e.toString());
+            return null;
+        }
+
+        return log.toString();
     }
 }

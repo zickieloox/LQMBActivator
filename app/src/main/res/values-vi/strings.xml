@@ -32,8 +32,7 @@
     <string name="toast_check_internet">Xin vui lòng kiểm tra lại đường truyền internet!</string>
     <string name="btn_join">Tham Gia</string>
     <string name="btn_send">Gửi</string>
-    <string name="ad_unit_banner">ca-app-pub-1603834578752860/1950034830</string>
-    <string name="ad_unit_interstitial">ca-app-pub-1603834578752860/7577766031</string>
     <string name="tv_checking_md5">Đang Kiểm Tra Mã MD5…</string>
     <string name="tv_md5_invalid">File \"lqmb.zic\" Không Hợp Lệ. Bạn Hãy Tải Lại Và Thử Thêm Lần Nữa.</string>
+    <string name="item_send_log">Gửi Log</string>
 </resources>
