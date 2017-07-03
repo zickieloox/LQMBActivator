@@ -120,7 +120,7 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
             FileUtils.copyAssetsFile(getActivity(), ANDROID_VENDING, sdcard + ANDROID_DATA);
             AppUtils.launchActivity(getActivity(), LQMB_PACKAGE_NAME, LQMB_ACTIVITY_NAME);
         } else {
-            Toast.makeText(getActivity(), getString(R.string.toats_not_install), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.toast_not_install), Toast.LENGTH_SHORT).show();
         }
     }
 

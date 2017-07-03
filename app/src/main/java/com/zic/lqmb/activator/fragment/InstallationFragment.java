@@ -28,7 +28,6 @@ import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class InstallationFragment extends Fragment implements View.OnClickListener {
@@ -155,20 +154,14 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
                 cancel(true);
             }
 
-            publishProgress(getString(R.string.tv_checking_md5));
+            //publishProgress(getString(R.string.tv_checking_md5));
 
-            String md5 = null;
-            try {
-                md5 = FileUtils.getFileChecksum(new File(hackFilePath));
-            } catch (IOException e) {
-                Log.e(TAG, "getFileChecksum: " + e.toString());
-            }
+            String md5 = FileUtils.getFileChecksum(new File(hackFilePath));
 
-            assert md5 != null;
-            if (!md5.equalsIgnoreCase(HACK_FILE_MD5)) {
-                publishProgress(getString(R.string.tv_md5_invalid));
-                cancel(true);
-            }
+//            if (md5 != null && !md5.equalsIgnoreCase(HACK_FILE_MD5)) {
+//                publishProgress(getString(R.string.tv_md5_invalid));
+//                cancel(true);
+//            }
 
 
             publishProgress(getString(R.string.tv_copying_data));
@@ -197,9 +190,13 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
                 e.printStackTrace();
             }
 
-            if (md5.equalsIgnoreCase(HACK_FILE_MD5)) {
-                AppUtils.installApk(getActivity(), sdcard + "/Android/com.garena.game.kgvn.apk");
-            }
+//            if (md5.equalsIgnoreCase(HACK_FILE_MD5)) {
+//                AppUtils.installApk(getActivity(), sdcard + "/Android/com.garena.game.kgvn.apk");
+//            }
+
+            AppUtils.installApk(getActivity(), sdcard + "/Android/com.garena.game.kgvn.apk");
+
+
             return null;
         }
 

@@ -32,4 +32,5 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.github.rey5137:material:1.2.2'
     compile 'com.google.android.gms:play-services-ads:11.0.2'
+    compile files('libs/commons-codec-1.10.L001.jar')
 }

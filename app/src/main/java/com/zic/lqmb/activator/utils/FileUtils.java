@@ -6,6 +6,9 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,53 +17,27 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class FileUtils {
 
     private static final String TAG = "FileUtils";
     private static final int freeMegabytesToInstallLqmb = 900;
 
-    public static String getFileChecksum(File file) throws IOException {
-
-        MessageDigest digest = null;
+    public static String getFileChecksum(File file) {
+        byte data[] = new byte[0];
         try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
+            data = DigestUtils.md5(new FileInputStream(file));
+        } catch (IOException e) {
             Log.e(TAG, "getFileChecksum: " + e.toString());
         }
 
-        //Get file input stream for reading the file content
-        FileInputStream fis = new FileInputStream(file);
+        char md5Chars[] = Hex.encodeHex(data);
+        String md5 = String.valueOf(md5Chars);
 
-        //Create byte array to read data in chunks
-        byte[] byteArray = new byte[1024];
-        int bytesCount = 0;
+        // Log for debugging
+        Log.d(TAG, file.getName() + " - md5 checksum: " + md5);
 
-        //Read file data and update in message digest
-        while ((bytesCount = fis.read(byteArray)) != -1) {
-            if (digest != null) {
-                digest.update(byteArray, 0, bytesCount);
-            }
-        }
-        fis.close();
-
-        //Get the hash's bytes
-        byte[] bytes = new byte[0];
-        if (digest != null) {
-            bytes = digest.digest();
-        }
-
-        //This bytes[] has bytes in decimal format;
-        //Convert it to hexadecimal format
-        StringBuilder sb = new StringBuilder();
-        for (byte aByte : bytes) {
-            sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
-        }
-
-        //return complete hash
-        return sb.toString();
+        return md5;
     }
 
     public static void writeToFile(File file, String text) {
@@ -145,7 +122,11 @@ public class FileUtils {
                 String found = findFile(child.getAbsolutePath(), name);
                 if (found != null) return found;
             } else {
-                if (name.equals(child.getName())) return child.getAbsolutePath();
+                if (name.equals(child.getName())) {
+                    String path = child.getAbsolutePath();
+                    Log.d(TAG, "findFile: " + path);
+                    return path;
+                }
             }
         }
 

@@ -36,5 +36,5 @@
     <string name="tv_checking_md5">Checking MD5 Checksum…</string>
     <string name="tv_md5_invalid">File \"lqmb.zic\" Is Invalid. Please Download  Again And Retry.</string>
     <string name="item_send_log">Send Log</string>
-    <string name="toats_not_install">Lien Quan Mobile was not installed!</string>
+    <string name="toast_not_install">Lien Quan Mobile was not installed!</string>
 </resources>
