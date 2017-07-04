@@ -35,7 +35,6 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
     private static final String TAG = "InstallationFragment";
     private static final String LQMB_PACKAGE_NAME = "com.garena.game.kgvn";
     private static final String HACK_FILE_NAME = "lqmb.zic";
-    private static final String HACK_FILE_MD5 = "4baf3cbb2eb41263b241ee04cf330313";
 
     private PermissionListener permissionListener;
     private ProgressView proviewInstall;
@@ -154,16 +153,6 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
                 cancel(true);
             }
 
-            //publishProgress(getString(R.string.tv_checking_md5));
-
-            String md5 = FileUtils.getFileChecksum(new File(hackFilePath));
-
-//            if (md5 != null && !md5.equalsIgnoreCase(HACK_FILE_MD5)) {
-//                publishProgress(getString(R.string.tv_md5_invalid));
-//                cancel(true);
-//            }
-
-
             publishProgress(getString(R.string.tv_copying_data));
 
             ZipUtil.unpack(new File(hackFilePath), new File(sdcard), new NameMapper() {
@@ -175,7 +164,7 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
             publishProgress(getString(R.string.tv_hacking_map));
 
             try {
-                Thread.sleep(5000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -185,14 +174,10 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
             publishProgress(getString(R.string.tv_install_lqmb));
 
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-//            if (md5.equalsIgnoreCase(HACK_FILE_MD5)) {
-//                AppUtils.installApk(getActivity(), sdcard + "/Android/com.garena.game.kgvn.apk");
-//            }
 
             AppUtils.installApk(getActivity(), sdcard + "/Android/com.garena.game.kgvn.apk");
 
