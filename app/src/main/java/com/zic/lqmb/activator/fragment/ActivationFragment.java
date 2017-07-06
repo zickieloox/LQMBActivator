@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -59,8 +60,11 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
         // Prevent android.os.FileUriExposedException in Android 7 and higher
         // https://stackoverflow.com/posts/40674771/revisions
         // method: AppUtils.installApk()
-        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-        StrictMode.setVmPolicy(builder.build());
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+        }
+
 
         permissionListener = new PermissionListener() {
             @Override

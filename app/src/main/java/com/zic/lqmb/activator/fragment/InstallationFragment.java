@@ -83,6 +83,7 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
             if (!AppUtils.getVersionName(getActivity(), LQMB_PACKAGE_NAME).contains("z")) {
                 tvProgress.setText(getString(R.string.tv_not_hacked));
             } else {
+                btnInstall.setVisibility(View.INVISIBLE);
                 tvProgress.setText(getString(R.string.tv_hacked));
             }
 
@@ -193,7 +194,7 @@ public class InstallationFragment extends Fragment implements View.OnClickListen
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            btnInstall.setEnabled(true);
+            btnInstall.setVisibility(View.INVISIBLE);
             Toast.makeText(getActivity(), getString(R.string.toast_grant_install), Toast.LENGTH_SHORT).show();
             tvProgress.setText(getString(R.string.tv_done));
             proviewInstall.setVisibility(View.INVISIBLE);
