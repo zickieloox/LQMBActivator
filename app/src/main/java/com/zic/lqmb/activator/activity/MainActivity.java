@@ -3,8 +3,10 @@ package com.zic.lqmb.activator.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +21,6 @@ import com.zic.lqmb.activator.R;
 import com.zic.lqmb.activator.adapter.MainFragmentPagerAdapter;
 import com.zic.lqmb.activator.fragment.ActivationFragment;
 import com.zic.lqmb.activator.fragment.InfoFragment;
-import com.zic.lqmb.activator.fragment.InstallationFragment;
 import com.zic.lqmb.activator.utils.FileUtils;
 
 import java.io.File;
@@ -29,15 +30,22 @@ import static com.zic.lqmb.activator.utils.Utils.generateLog;
 public class MainActivity extends AppCompatActivity {
 
     private static final String ADMOB_APP_ID = "ca-app-pub-1603834578752860~9473301633";
-    private AdView mAdView;
-
     private static String sdcard;
+    private AdView mAdView;
     private File logFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Prevent android.os.FileUriExposedException in Android 7 and higher
+        // https://stackoverflow.com/posts/40674771/revisions
+        // method: AppUtils.installApk()
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+        }
 
         sdcard = Environment.getExternalStorageDirectory().getAbsolutePath();
 
@@ -65,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         MainFragmentPagerAdapter adapter = new MainFragmentPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ActivationFragment(), getString(R.string.title_activation));
-        adapter.addFragment(new InstallationFragment(), getString(R.string.title_installation));
+        //adapter.addFragment(new InstallationFragment(), getString(R.string.title_installation));
         adapter.addFragment(new InfoFragment(), getString(R.string.title_info));
         viewPager.setAdapter(adapter);
     }

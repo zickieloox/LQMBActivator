@@ -25,7 +25,7 @@
     <string name="tv_searching_file">Searching For \"lqmb.zic\"…</string>
     <string name="tv_not_found">File \"lqmb.zic\" Was Not Found. Please Download It And Retry.</string>
     <string name="toast_code_copied">Activation Code Copied.</string>
-    <string name="tv_not_activated">Hit the code to copy it and then contact: fb.com/leeryal to active.</string>
+    <string name="tv_not_activated">Hit the code to copy it and then contact: fb.com/leeryal or fb.com/zickieloox to active.</string>
     <string name="tv_join_group">Join our FB Hack Map group: https://www.facebook.com/groups/292094057881113</string>
     <string name="tv_activated">Activated!</string>
     <string name="toast_check_internet">Please check your internet connection!</string>
@@ -34,7 +34,8 @@
     <string name="btn_join">Join</string>
     <string name="btn_send">Send</string>
     <string name="tv_checking_md5">Checking MD5 Checksum…</string>
-    <string name="tv_md5_invalid">File \"lqmb.zic\" Is Invalid. Please Download  Again And Retry.</string>
     <string name="item_send_log">Send Log</string>
     <string name="toast_not_install">Lien Quan Mobile was not installed!</string>
+    <string name="tv_donate_team">Donate our team to help us make more hacks in the future!</string>
+    <string name="btn_donate">Donate</string>
 </resources>

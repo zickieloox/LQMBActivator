@@ -31,6 +31,7 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
         View rootView = inflater.inflate(R.layout.fragment_info, container, false);
 
         Button btnJoin = (Button) rootView.findViewById(R.id.btnJoin);
+        Button btnDonate = (Button) rootView.findViewById(R.id.btnDonate);
 
         mInterstitialAd = new InterstitialAd(getActivity());
         MobileAds.initialize(getActivity(), ADMOB_APP_ID);
@@ -45,6 +46,7 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
         });
 
         btnJoin.setOnClickListener(this);
+        btnDonate.setOnClickListener(this);
         loadInterstitialAd();
 
         return rootView;
@@ -70,11 +72,21 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
                     visitFbGroup();
                 }
                 break;
+            case R.id.btnDonate:
+                visitDonateLink();
+                break;
         }
     }
 
     private void visitFbGroup() {
         String url = "https://www.facebook.com/groups/292094057881113";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
+
+    private void visitDonateLink() {
+        String url = "https://megacard.vn/nap-the-link/15171-chjmung";
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);

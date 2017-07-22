@@ -30,6 +30,8 @@
     @com.squareup.otto.Produce public *;
 }
 
+-dontwarn com.squareup.okhttp.**
+
 -ignorewarnings
 
 -keep class * {

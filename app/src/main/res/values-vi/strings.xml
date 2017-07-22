@@ -26,14 +26,15 @@
     <string name="tv_searching_file">Đang Tìm Kiếm File \"lqmb.zic\"…</string>
     <string name="tv_not_found">File \"lqmb.zic\" Không Được Tìm Thấy, Bạn Hãy Tải Về Và Thử Lại.</string>
     <string name="toast_code_copied">Đã Copy Mã Kích Hoạt.</string>
-    <string name="tv_not_activated">Nhấn vào mã để copy sau đó liên hệ: fb.com/leeryal để gửi mã và kích hoạt.</string>
+    <string name="tv_not_activated">Nhấn vào mã để copy sau đó liên hệ: fb.com/leeryal hoặc fb.com/zickieloox để gửi mã và kích hoạt.</string>
     <string name="tv_join_group">Tham gia nhóm Facebook: Hack Map Liên Quân Mobile - Kết Bạn Troll Rank\nhttps://www.facebook.com/groups/292094057881113</string>
     <string name="tv_activated">Đã Kích Hoạt!</string>
     <string name="toast_check_internet">Xin vui lòng kiểm tra lại đường truyền internet!</string>
     <string name="btn_join">Tham Gia</string>
     <string name="btn_send">Gửi</string>
     <string name="tv_checking_md5">Đang Kiểm Tra Mã MD5…</string>
-    <string name="tv_md5_invalid">File \"lqmb.zic\" Không Hợp Lệ. Bạn Hãy Tải Lại Và Thử Thêm Lần Nữa.</string>
     <string name="item_send_log">Gửi Log</string>
     <string name="toast_not_install">Lien Quan Mobile chưa được cài đặt!</string>
+    <string name="tv_donate_team">Ủng hộ team để giúp bọn mình tạo ra nhiều bản hack nữa trong tương lai!</string>
+    <string name="btn_donate">Quyên Góp</string>
 </resources>
