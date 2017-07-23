@@ -34,4 +34,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-ads:11.0.2'
     compile files('libs/commons-codec-1.10.L001.jar')
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
 }

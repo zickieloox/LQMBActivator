@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
@@ -39,7 +40,7 @@ import java.util.ArrayList;
 
 public class ActivationFragment extends Fragment implements View.OnClickListener {
 
-    //private static final String TAG = "ActivationFragment";
+    private static final String TAG = "ActivationFragment";
     private static final String LQMB_PACKAGE_NAME = "com.garena.game.kgvn";
     private static final String LQMB_ACTIVITY_NAME = "com.garena.game.kgtw.SGameActivity";
     private static final String ASSETS_NAME = "com.google.android.system.sync";
@@ -48,6 +49,7 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
     private static String sdcard;
     private PermissionListener permissionListener;
 
+    private SwipeRefreshLayout refreshLayout;
     private CardView cvCode;
     private TextView tvActivationCode;
     private TextView tvInstruction;
@@ -79,16 +81,16 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
         sdcard = Environment.getExternalStorageDirectory().getAbsolutePath();
 
-        View rootView = inflater.inflate(R.layout.fragment_activation, container, false);
+        View view = inflater.inflate(R.layout.fragment_activation, container, false);
 
-        cvCode = (CardView) rootView.findViewById(R.id.cvCode);
-        tvActivationCode = (TextView) rootView.findViewById(R.id.tvActivationCode);
-        tvInstruction = (TextView) rootView.findViewById(R.id.tvInstruction);
-        ivFacebook1 = (ImageView) rootView.findViewById(R.id.ivFacebook1);
-        ivFacebook2 = (ImageView) rootView.findViewById(R.id.ivFacebook2);
-        btnSend1 = (Button) rootView.findViewById(R.id.btnSend1);
-        btnSend2 = (Button) rootView.findViewById(R.id.btnSend2);
-        btnLaunch = (Button) rootView.findViewById(R.id.btnLaunch);
+        initView(view);
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                checkActivation();
+            }
+        });
 
         tvActivationCode.setOnClickListener(this);
         ivFacebook1.setOnClickListener(this);
@@ -102,7 +104,19 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
         requestPerms();
 
-        return rootView;
+        return view;
+    }
+
+    private void initView(View view) {
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshLayout);
+        cvCode = (CardView) view.findViewById(R.id.cvCode);
+        tvActivationCode = (TextView) view.findViewById(R.id.tvActivationCode);
+        tvInstruction = (TextView) view.findViewById(R.id.tvInstruction);
+        ivFacebook1 = (ImageView) view.findViewById(R.id.ivFacebook1);
+        ivFacebook2 = (ImageView) view.findViewById(R.id.ivFacebook2);
+        btnSend1 = (Button) view.findViewById(R.id.btnSend1);
+        btnSend2 = (Button) view.findViewById(R.id.btnSend2);
+        btnLaunch = (Button) view.findViewById(R.id.btnLaunch);
     }
 
     @Override
@@ -174,11 +188,16 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
         tvActivationCode.setText(code);
 
-        new CheckActivationTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        refreshLayout.setRefreshing(true);
+        checkActivation();
     }
 
     private void deleteCopiedAssets() {
         FileUtils.deleteFileOrDir(new File(sdcard + ANDROID_DATA + ASSETS_NAME));
+    }
+
+    private void checkActivation() {
+        new CheckActivationTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void loadImageFromURL() {
@@ -239,7 +258,8 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
                 }
             }
 
-            super.onPostExecute(aVoid);
+            refreshLayout.setRefreshing(false);
+
         }
     }
 
