@@ -18,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +33,16 @@ import com.squareup.picasso.Picasso;
 import com.zic.lqmb.activator.R;
 import com.zic.lqmb.activator.utils.AppUtils;
 import com.zic.lqmb.activator.utils.FileUtils;
-import com.zic.lqmb.activator.utils.NetUtils;
 import com.zic.lqmb.activator.utils.Utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ActivationFragment extends Fragment implements View.OnClickListener {
 
@@ -45,6 +51,9 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
     private static final String LQMB_ACTIVITY_NAME = "com.garena.game.kgtw.SGameActivity";
     private static final String ASSETS_NAME = "com.google.android.system.sync";
     private static final String ANDROID_DATA = "/Android/data/";
+
+    private static final String DATA_URL = "http://bigone.tk/lqmb/activated_list.html";
+    private static final String BACKUP_DATA_URL = "http://lqmb.ml/lqmb/activated_list.html";
 
     private static String sdcard;
     private PermissionListener permissionListener;
@@ -59,7 +68,6 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
     private Button btnSend2;
     private Button btnLaunch;
     private String code;
-    private String activatedList;
 
     @Nullable
     @Override
@@ -83,7 +91,7 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
         View view = inflater.inflate(R.layout.fragment_activation, container, false);
 
-        initView(view);
+        setupView(view);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -107,7 +115,7 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
         return view;
     }
 
-    private void initView(View view) {
+    private void setupView(View view) {
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshLayout);
         cvCode = (CardView) view.findViewById(R.id.cvCode);
         tvActivationCode = (TextView) view.findViewById(R.id.tvActivationCode);
@@ -222,46 +230,76 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
         startActivity(i);
     }
 
-    private class CheckActivationTask extends AsyncTask<Void, Void, Void> {
+    private void setActivated() {
+        cvCode.setVisibility(View.INVISIBLE);
+        tvInstruction.setText(getString(R.string.tv_activated));
+        ivFacebook1.setVisibility(View.GONE);
+        ivFacebook2.setVisibility(View.GONE);
+        btnSend1.setVisibility(View.INVISIBLE);
+        btnSend2.setVisibility(View.INVISIBLE);
+        btnLaunch.setEnabled(true);
+        btnLaunch.setVisibility(View.VISIBLE);
+    }
+
+    private class CheckActivationTask extends AsyncTask<Void, Void, String> {
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected String doInBackground(Void... params) {
 
             Activity activity = getActivity();
             if (isAdded() && activity != null) {
-                String dataUrl = "http://bigone.tk/lqmb/activated_list.html";
-                String dataUrlBackup = "http://lqmb.ml/lqmb/activated_list.html";
-                activatedList = NetUtils.readTextFromUrl(dataUrl);
-                activatedList = activatedList + NetUtils.readTextFromUrl(dataUrlBackup);
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(15000, TimeUnit.MILLISECONDS)
+                        .retryOnConnectionFailure(true)
+                        .build();
+
+                Request request1 = new Request.Builder()
+                        .url(DATA_URL)
+                        .build();
+
+                Request request2 = new Request.Builder()
+                        .url(BACKUP_DATA_URL)
+                        .build();
+
+                Response response1;
+                Response response2;
+                String result;
+                try {
+                    response1 = client.newCall(request1).execute();
+                    response2 = client.newCall(request2).execute();
+
+                    if (response1.isSuccessful()) {
+                        result = response1.body().string();
+                    } else {
+                        throw new IOException("Unexpected code " + response1);
+                    }
+
+                    if (response2.isSuccessful()) {
+                        result += response2.body().string();
+                    } else {
+                        throw new IOException("Unexpected code " + response1);
+                    }
+
+                    return result;
+                } catch (IOException e) {
+                    Log.e(TAG, "CheckActivationTask: " + e.toString());
+                }
             }
 
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-
-            if (activatedList.length() == 0) {
-                Toast.makeText(getActivity(), getString(R.string.toast_check_internet), Toast.LENGTH_SHORT).show();
-            } else {
-                if (activatedList.contains(code)) {
-                    cvCode.setVisibility(View.INVISIBLE);
-                    tvInstruction.setText(getString(R.string.tv_activated));
-                    ivFacebook1.setVisibility(View.GONE);
-                    ivFacebook2.setVisibility(View.GONE);
-                    btnSend1.setVisibility(View.INVISIBLE);
-                    btnSend2.setVisibility(View.INVISIBLE);
-                    btnLaunch.setEnabled(true);
-                    btnLaunch.setVisibility(View.VISIBLE);
-                } else {
-                    loadImageFromURL();
-                }
-            }
-
+        protected void onPostExecute(String list) {
             refreshLayout.setRefreshing(false);
 
+            if (list == null) {
+                Toast.makeText(getActivity(), getString(R.string.toast_check_internet), Toast.LENGTH_SHORT).show();
+            } else if (list.contains(code)) {
+                setActivated();
+            } else {
+                loadImageFromURL();
+            }
         }
     }
-
-
 }
