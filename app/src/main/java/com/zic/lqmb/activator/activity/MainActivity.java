@@ -120,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.item_send_log:
                 new CreateLogFileTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 return true;
+            case R.id.item_contact:
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse("https://m.me/100006594040887"));
+                startActivity(i);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

@@ -30,10 +30,11 @@ import org.zeroturnaround.zip.ZipUtil;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.zic.lqmb.activator.data.MyApplication.LQMB_PACKAGE_NAME;
+
 public class InstallationFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "InstallationFragment";
-    private static final String LQMB_PACKAGE_NAME = "com.garena.game.kgvn";
     private static final String HACK_FILE_NAME = "lqmb.zic";
 
     private PermissionListener permissionListener;

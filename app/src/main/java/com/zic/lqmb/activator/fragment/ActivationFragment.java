@@ -7,6 +7,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -33,27 +35,27 @@ import com.squareup.picasso.Picasso;
 import com.zic.lqmb.activator.R;
 import com.zic.lqmb.activator.utils.AppUtils;
 import com.zic.lqmb.activator.utils.FileUtils;
+import com.zic.lqmb.activator.utils.NetUtils;
 import com.zic.lqmb.activator.utils.Utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.regex.Pattern;
+
+import static com.zic.lqmb.activator.data.MyApplication.ANDROID_DATA;
+import static com.zic.lqmb.activator.data.MyApplication.ASSETS_NAME;
+import static com.zic.lqmb.activator.data.MyApplication.LQMB_MAIN_ACTIVITY;
+import static com.zic.lqmb.activator.data.MyApplication.LQMB_PACKAGE_NAME;
+import static com.zic.lqmb.activator.data.MyApplication.MGAME_FOLDER;
+import static com.zic.lqmb.activator.data.MyApplication.SOURCE_URL;
 
 public class ActivationFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "ActivationFragment";
-    private static final String LQMB_PACKAGE_NAME = "com.garena.game.kgvn";
-    private static final String LQMB_ACTIVITY_NAME = "com.garena.game.kgtw.SGameActivity";
-    private static final String ASSETS_NAME = "com.google.android.system.sync";
-    private static final String ANDROID_DATA = "/Android/data/";
-
-    private static final String DATA_URL = "http://bigone.tk/lqmb/activated_list.html";
-    private static final String BACKUP_DATA_URL = "http://lqmb.ml/lqmb/activated_list.html";
 
     private static String sdcard;
     private PermissionListener permissionListener;
@@ -67,7 +69,17 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
     private Button btnSend1;
     private Button btnSend2;
     private Button btnLaunch;
+
     private String code;
+    private String versionCode;
+    private String lqmbVersionCode = "z";
+    private String textUpdate;
+    private String textNotActivated;
+    private String textActivated;
+    private String url1;
+    private String url2;
+    private String imageUrl1;
+    private String imageUrl2;
 
     @Nullable
     @Override
@@ -93,6 +105,8 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
         setupView(view);
 
+        tvInstruction.setText(getString(R.string.tv_not_activated));
+
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -105,10 +119,17 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
         ivFacebook2.setOnClickListener(this);
         btnSend1.setOnClickListener(this);
         btnSend2.setOnClickListener(this);
-        btnLaunch.setOnClickListener(this);
+        btnLaunch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), getString(R.string.toast_not_activated), Toast.LENGTH_SHORT).show();
+            }
+        });
 
-        btnLaunch.setEnabled(false);
-        btnLaunch.setVisibility(View.INVISIBLE);
+        ivFacebook1.setVisibility(View.GONE);
+        ivFacebook2.setVisibility(View.GONE);
+        btnSend1.setVisibility(View.INVISIBLE);
+        btnSend2.setVisibility(View.INVISIBLE);
 
         requestPerms();
 
@@ -134,19 +155,19 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
         switch (id) {
             case R.id.tvActivationCode:
                 ((ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("Activation Code", code));
-                Toast.makeText(getActivity(), getString(R.string.toast_code_copied), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.toast_key_copied), Toast.LENGTH_SHORT).show();
                 break;
             case R.id.ivFacebook1:
-                visitFbProfile1();
+                visitLink(url1);
                 break;
             case R.id.ivFacebook2:
-                visitFbProfile2();
+                visitLink(url2);
                 break;
             case R.id.btnSend1:
-                visitFbProfile1();
+                visitLink(url1);
                 break;
             case R.id.btnSend2:
-                visitFbProfile2();
+                visitLink(url2);
                 break;
             case R.id.btnLaunch:
                 launchLqmb();
@@ -156,8 +177,12 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
     private void launchLqmb() {
         if (AppUtils.isAppInstalled(getActivity(), LQMB_PACKAGE_NAME)) {
-            FileUtils.copyAssetsFile(getActivity(), ASSETS_NAME, sdcard + ANDROID_DATA);
-            AppUtils.launchActivity(getActivity(), LQMB_PACKAGE_NAME, LQMB_ACTIVITY_NAME);
+            if (!AppUtils.getVersionName(getActivity(), LQMB_PACKAGE_NAME).contains(lqmbVersionCode)) {
+                Toast.makeText(getActivity(), getString(R.string.toast_not_valid_version), Toast.LENGTH_SHORT).show();
+            } else {
+                FileUtils.copyAssetsFile(getActivity(), ASSETS_NAME, sdcard + ANDROID_DATA);
+                AppUtils.launchActivity(getActivity(), LQMB_PACKAGE_NAME, LQMB_MAIN_ACTIVITY);
+            }
         } else {
             Toast.makeText(getActivity(), getString(R.string.toast_not_install), Toast.LENGTH_SHORT).show();
         }
@@ -174,6 +199,7 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
     }
 
+    @SuppressLint("SetTextI18n")
     private void doActivation() {
         deleteCopiedAssets();
 
@@ -194,13 +220,14 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
         code = Utils.md5(code + "com.garena.game.lqmb.94936");
 
-        tvActivationCode.setText(code);
+        tvActivationCode.setText("ZKey: " + code);
 
         refreshLayout.setRefreshing(true);
         checkActivation();
     }
 
     private void deleteCopiedAssets() {
+        FileUtils.deleteFileOrDir(new File(sdcard + ANDROID_DATA + MGAME_FOLDER));
         FileUtils.deleteFileOrDir(new File(sdcard + ANDROID_DATA + ASSETS_NAME));
     }
 
@@ -209,22 +236,11 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
     }
 
     private void loadImageFromURL() {
-        String URL1 = "https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/12993459_871194812989365_1969962360671001846_n.jpg?oh=e4d761d5405c3da0637a6cd23fdefd6c&oe=5A0DF622";
-        String URL2 = "https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/19225209_1992873860942396_5642195416314929386_n.jpg?oh=e77ca9b41a422f819c0a7e4ae47b8351&oe=59C9C464";
-
-        Picasso.with(getActivity()).load(URL1).into(ivFacebook1);
-        Picasso.with(getActivity()).load(URL2).into(ivFacebook2);
+        Picasso.with(getActivity()).load(imageUrl1).into(ivFacebook1);
+        Picasso.with(getActivity()).load(imageUrl2).into(ivFacebook2);
     }
 
-    private void visitFbProfile1() {
-        String url = "https://m.me/100002965634097";
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
-        startActivity(i);
-    }
-
-    private void visitFbProfile2() {
-        String url = "https://m.me/100006594040887";
+    private void visitLink(String url) {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);
@@ -232,13 +248,13 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
     private void setActivated() {
         cvCode.setVisibility(View.INVISIBLE);
-        tvInstruction.setText(getString(R.string.tv_activated));
+        tvInstruction.setText(textActivated);
         ivFacebook1.setVisibility(View.GONE);
         ivFacebook2.setVisibility(View.GONE);
         btnSend1.setVisibility(View.INVISIBLE);
         btnSend2.setVisibility(View.INVISIBLE);
+        btnLaunch.setOnClickListener(this);
         btnLaunch.setEnabled(true);
-        btnLaunch.setVisibility(View.VISIBLE);
     }
 
     private class CheckActivationTask extends AsyncTask<Void, Void, String> {
@@ -246,58 +262,90 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
         @Override
         protected String doInBackground(Void... params) {
 
+            String result = null;
+
             Activity activity = getActivity();
             if (isAdded() && activity != null) {
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .connectTimeout(15000, TimeUnit.MILLISECONDS)
-                        .retryOnConnectionFailure(true)
-                        .build();
+                String source = NetUtils.getHtml(SOURCE_URL);
 
-                Request request1 = new Request.Builder()
-                        .url(DATA_URL)
-                        .build();
-
-                Request request2 = new Request.Builder()
-                        .url(BACKUP_DATA_URL)
-                        .build();
-
-                Response response1;
-                Response response2;
-                String result;
-                try {
-                    response1 = client.newCall(request1).execute();
-                    response2 = client.newCall(request2).execute();
-
-                    if (response1.isSuccessful()) {
-                        result = response1.body().string();
-                    } else {
-                        throw new IOException("Unexpected code " + response1);
-                    }
-
-                    if (response2.isSuccessful()) {
-                        result += response2.body().string();
-                    } else {
-                        throw new IOException("Unexpected code " + response1);
-                    }
-
-                    return result;
-                } catch (IOException e) {
-                    Log.e(TAG, "CheckActivationTask: " + e.toString());
+                if (source == null) {
+                    return null;
                 }
+
+                String urls;
+                JSONObject root;
+                try {
+                    root = new JSONObject(source);
+                    urls = root.getString("bio");
+                } catch (JSONException e) {
+                    Log.e(TAG, e.toString());
+                    return null;
+                }
+
+                String[] urlArr = urls.split(System.getProperty("line.separator"));
+                result = NetUtils.getHtml(urlArr[0]);
+                result += NetUtils.getHtml(urlArr[1]);
+
+                String data = result.split("end")[0];
+                String[] lines = data.split(System.getProperty("line.separator"));
+                String info;
+                if (Locale.getDefault().getLanguage().equals("vi")) {
+                    info = lines[1];
+                } else {
+                    info = lines[0];
+                }
+
+                String[] infoArr = info.split(Pattern.quote("|"));
+                versionCode = infoArr[0];
+                lqmbVersionCode = infoArr[1];
+                textUpdate = infoArr[2];
+                textNotActivated = infoArr[3];
+                textActivated = infoArr[4];
+                url1 = infoArr[5];
+                url2 = infoArr[6];
+                imageUrl1 = infoArr[7];
+                imageUrl2 = infoArr[8];
             }
 
-            return null;
+            return result;
         }
 
         @Override
-        protected void onPostExecute(String list) {
+        protected void onPostExecute(String result) {
             refreshLayout.setRefreshing(false);
 
-            if (list == null) {
+            if (result == null) {
                 Toast.makeText(getActivity(), getString(R.string.toast_check_internet), Toast.LENGTH_SHORT).show();
-            } else if (list.contains(code)) {
+                return;
+            }
+
+            String thisVersionCode;
+            PackageInfo pInfo;
+            try {
+                pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+                thisVersionCode = String.valueOf(pInfo.versionCode);
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.e(TAG, e.toString());
+                return;
+            }
+
+            if (!thisVersionCode.equals(versionCode)) {
+                ivFacebook1.setVisibility(View.GONE);
+                ivFacebook2.setVisibility(View.GONE);
+                btnSend1.setVisibility(View.INVISIBLE);
+                btnSend2.setVisibility(View.INVISIBLE);
+                tvInstruction.setText(textUpdate);
+                return;
+            }
+
+            if (result.contains(code)) {
                 setActivated();
             } else {
+                tvInstruction.setText(textNotActivated);
+                ivFacebook1.setVisibility(View.VISIBLE);
+                ivFacebook2.setVisibility(View.VISIBLE);
+                btnSend1.setVisibility(View.VISIBLE);
+                btnSend2.setVisibility(View.VISIBLE);
                 loadImageFromURL();
             }
         }

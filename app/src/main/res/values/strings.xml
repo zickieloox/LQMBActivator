@@ -24,10 +24,10 @@
     <string name="toast_grant_install">Grant to install</string>
     <string name="tv_searching_file">Searching For \"lqmb.zic\"…</string>
     <string name="tv_not_found">File \"lqmb.zic\" Was Not Found. Please Download It And Retry.</string>
-    <string name="toast_code_copied">Activation Code Copied.</string>
-    <string name="tv_not_activated">Hit the code to copy it and then contact: fb.com/leeryal or fb.com/zickieloox to active.</string>
+    <string name="toast_key_copied">ZKey Copied.</string>
+    <string name="tv_not_activated">Not authorized! Pull to reload.</string>
     <string name="tv_join_group">Join our FB Hack Map group: https://www.facebook.com/groups/292094057881113</string>
-    <string name="tv_activated">Activated!</string>
+    <string name="tv_activated">Activated, Have fun!</string>
     <string name="toast_check_internet">Please check your internet connection!</string>
     <string name="ad_unit_banner" translatable="false">ca-app-pub-1603834578752860/1950034830</string>
     <string name="ad_unit_interstitial" translatable="false">ca-app-pub-1603834578752860/7577766031</string>
@@ -38,4 +38,7 @@
     <string name="toast_not_install">Lien Quan Mobile was not installed!</string>
     <string name="tv_donate_team">Donate our team to help us make more hacks in the future!</string>
     <string name="btn_donate">Donate</string>
+    <string name="toast_not_activated">Your ZKey was not activated!</string>
+    <string name="item_contact">Contact author</string>
+    <string name="toast_not_valid_version">This LQMB mod version is not valid, Please download the lastest LQMB mod version!</string>
 </resources>
