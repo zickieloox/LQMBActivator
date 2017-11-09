@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/refreshLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40sp"
+        android:orientation="vertical"
+        android:padding="16sp">
+
+        <TextView
+            android:id="@+id/tvCardInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/tv_card_info"
+            android:textColor="#f44336"
+            android:textSize="20sp" />
+
+        <com.jaredrummler.materialspinner.MaterialSpinner
+            android:layout_marginTop="16dp"
+            android:id="@+id/spinner_telco"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:ms_background_color="@color/colorAccent" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/til_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16sp">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="none"
+                android:hint="@string/hint_card"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textSize="16sp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/til_serial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20sp">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="none"
+                android:hint="@string/hint_serial"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textSize="16sp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/btn_pay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:text="@string/btn_pay"
+            android:textColor="#f44336"
+            android:textSize="25sp" />
+
+    </LinearLayout>
+</ScrollView>

@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.zic.lqmb.activator"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 4
-        versionName "1.4"
+        versionCode 7
+        versionName "1.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -34,4 +34,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-ads:11.0.4'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'com.jaredrummler:android-device-names:1.1.5'
+    compile 'com.jaredrummler:material-spinner:1.2.1'
+    compile 'com.afollestad.material-dialogs:commons:0.9.4.5'
+    compile 'com.snatik:storage:2.1.0'
 }

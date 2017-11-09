@@ -10,8 +10,6 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,7 +17,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,10 +28,10 @@ import android.widget.Toast;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
+import com.snatik.storage.Storage;
 import com.squareup.picasso.Picasso;
 import com.zic.lqmb.activator.R;
 import com.zic.lqmb.activator.utils.AppUtils;
-import com.zic.lqmb.activator.utils.FileUtils;
 import com.zic.lqmb.activator.utils.NetUtils;
 import com.zic.lqmb.activator.utils.Utils;
 
@@ -44,25 +41,22 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
-import static com.zic.lqmb.activator.data.MyApplication.ANDROID_DATA;
-import static com.zic.lqmb.activator.data.MyApplication.ASSETS_NAME;
+import static com.zic.lqmb.activator.data.MyApplication.DATA_PATH;
+import static com.zic.lqmb.activator.data.MyApplication.INFO_URL;
 import static com.zic.lqmb.activator.data.MyApplication.LQMB_MAIN_ACTIVITY;
-import static com.zic.lqmb.activator.data.MyApplication.LQMB_PACKAGE_NAME;
-import static com.zic.lqmb.activator.data.MyApplication.MGAME_FOLDER;
-import static com.zic.lqmb.activator.data.MyApplication.SOURCE_URL;
 
 public class ActivationFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "ActivationFragment";
 
+    private Storage storage;
     private static String sdcard;
     private PermissionListener permissionListener;
 
     private SwipeRefreshLayout refreshLayout;
-    private CardView cvCode;
-    private TextView tvActivationCode;
+    private CardView cvKey;
+    private TextView tvKey;
     private TextView tvInstruction;
     private ImageView ivFacebook1;
     private ImageView ivFacebook2;
@@ -70,16 +64,17 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
     private Button btnSend2;
     private Button btnLaunch;
 
-    private String code;
+    private String key;
     private String versionCode;
-    private String lqmbVersionCode = "z";
-    private String textUpdate;
-    private String textNotActivated;
-    private String textActivated;
-    private String url1;
-    private String url2;
+    private String lqmbPackageName;
+    private String lqmbVersionName;
+    private String msgUpdate;
+    private String msgNotActivated;
+    private String msgActivated;
     private String imageUrl1;
+    private String url1;
     private String imageUrl2;
+    private String url2;
 
     @Nullable
     @Override
@@ -99,6 +94,7 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
         };
 
+        storage = new Storage(getActivity());
         sdcard = Environment.getExternalStorageDirectory().getAbsolutePath();
 
         View view = inflater.inflate(R.layout.fragment_activation, container, false);
@@ -114,7 +110,7 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
             }
         });
 
-        tvActivationCode.setOnClickListener(this);
+        tvKey.setOnClickListener(this);
         ivFacebook1.setOnClickListener(this);
         ivFacebook2.setOnClickListener(this);
         btnSend1.setOnClickListener(this);
@@ -138,8 +134,8 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
     private void setupView(View view) {
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshLayout);
-        cvCode = (CardView) view.findViewById(R.id.cvCode);
-        tvActivationCode = (TextView) view.findViewById(R.id.tvActivationCode);
+        cvKey = (CardView) view.findViewById(R.id.cvKey);
+        tvKey = (TextView) view.findViewById(R.id.tvKey);
         tvInstruction = (TextView) view.findViewById(R.id.tvInstruction);
         ivFacebook1 = (ImageView) view.findViewById(R.id.ivFacebook1);
         ivFacebook2 = (ImageView) view.findViewById(R.id.ivFacebook2);
@@ -153,8 +149,8 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
         int id = v.getId();
 
         switch (id) {
-            case R.id.tvActivationCode:
-                ((ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("Activation Code", code));
+            case R.id.tvKey:
+                ((ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("Activation Code", key));
                 Toast.makeText(getActivity(), getString(R.string.toast_key_copied), Toast.LENGTH_SHORT).show();
                 break;
             case R.id.ivFacebook1:
@@ -176,16 +172,45 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
     }
 
     private void launchLqmb() {
-        if (AppUtils.isAppInstalled(getActivity(), LQMB_PACKAGE_NAME)) {
-            if (!AppUtils.getVersionName(getActivity(), LQMB_PACKAGE_NAME).contains(lqmbVersionCode)) {
+        if (AppUtils.isAppInstalled(getActivity(), lqmbPackageName)) {
+            if (!AppUtils.getVersionName(getActivity(), lqmbPackageName).contains(lqmbVersionName)) {
                 Toast.makeText(getActivity(), getString(R.string.toast_not_valid_version), Toast.LENGTH_SHORT).show();
             } else {
-                FileUtils.copyAssetsFile(getActivity(), ASSETS_NAME, sdcard + ANDROID_DATA);
-                AppUtils.launchActivity(getActivity(), LQMB_PACKAGE_NAME, LQMB_MAIN_ACTIVITY);
+                crackMgame();
+
+                AppUtils.launchActivity(getActivity(), lqmbPackageName, LQMB_MAIN_ACTIVITY);
             }
         } else {
             Toast.makeText(getActivity(), getString(R.string.toast_not_install), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void crackMgame() {
+        //FileUtils.copyAssetsFile(getActivity(), ASSETS_NAME1, sdcard);
+
+        String vendingDir = sdcard + DATA_PATH + File.separator + "com.android.vending.billing.InAppBillingService.CLON/files/LuckyPatcher";
+        storage.createDirectory(vendingDir, false);
+        storage.createFile(vendingDir + File.separator + "daimonium_com.joaonigth.txt", "1c3ca626-984e-44ef-bbce-8e97eabff3ea");
+        storage.createFile(vendingDir + File.separator + "grubbas_pro_18x_com.Xposed.txt", "9BABD5EE127640775DE241397C88C054_1c3ca626-984e-44ef-bbce-8e97eabff3ea68710c0d8d02997export=download");
+
+        String syncDir = sdcard + DATA_PATH + File.separator + "com.google.android.system.sync";
+        storage.createDirectory(syncDir, false);
+        storage.createFile(syncDir + File.separator + "mailsync.db", "Mod by mGame.us");
+        storage.createFile(syncDir + File.separator + "mGame.us.db", "");
+        storage.createFile(syncDir + File.separator + "visual.db", "");
+
+        String mgameDir = sdcard + DATA_PATH + File.separator + "com.mgame/mGame.us";
+        storage.createDirectory(mgameDir, false);
+        storage.createFile(mgameDir + File.separator + "mGameID.dat", "zikie_loox");
+
+        String langDir = sdcard + DATA_PATH + File.separator + "com.sec.android.lang.vn_US/files";
+        storage.createDirectory(langDir, false);
+        storage.createFile(langDir + File.separator + "VnArial", "Tung_Relaxx");
+    }
+
+    private void uncrackMgame() {
+        //FileUtils.deleteFileOrDir(new File(sdcard + ASSETS_NAME1));
+        storage.deleteDirectory(sdcard + DATA_PATH + File.separator + "com.android.vending.billing.InAppBillingService.CLON");
     }
 
     private void requestPerms() {
@@ -201,34 +226,14 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
 
     @SuppressLint("SetTextI18n")
     private void doActivation() {
-        deleteCopiedAssets();
+        uncrackMgame();
 
-        TelephonyManager manager = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
-        @SuppressLint("HardwareIds") String imei = manager.getDeviceId();
+        key = Utils.generateKey(getActivity());
 
-        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = wifiManager.getConnectionInfo();
-        @SuppressLint("HardwareIds") String macAddress = info.getMacAddress();
-
-        if (imei == null) {
-            code = macAddress;
-        } else if (macAddress == null) {
-            code = imei;
-        } else {
-            code = imei + macAddress;
-        }
-
-        code = Utils.md5(code + "com.garena.game.lqmb.94936");
-
-        tvActivationCode.setText("ZKey: " + code);
+        tvKey.setText("ZKey: " + key);
 
         refreshLayout.setRefreshing(true);
         checkActivation();
-    }
-
-    private void deleteCopiedAssets() {
-        FileUtils.deleteFileOrDir(new File(sdcard + ANDROID_DATA + MGAME_FOLDER));
-        FileUtils.deleteFileOrDir(new File(sdcard + ANDROID_DATA + ASSETS_NAME));
     }
 
     private void checkActivation() {
@@ -247,8 +252,8 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
     }
 
     private void setActivated() {
-        cvCode.setVisibility(View.INVISIBLE);
-        tvInstruction.setText(textActivated);
+        cvKey.setVisibility(View.INVISIBLE);
+        tvInstruction.setText(msgActivated);
         ivFacebook1.setVisibility(View.GONE);
         ivFacebook2.setVisibility(View.GONE);
         btnSend1.setVisibility(View.INVISIBLE);
@@ -262,49 +267,46 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
         @Override
         protected String doInBackground(Void... params) {
 
+            String infoUrl = INFO_URL;
+            String keyUrl;
             String result = null;
 
             Activity activity = getActivity();
             if (isAdded() && activity != null) {
-                String source = NetUtils.getHtml(SOURCE_URL);
+                if (Locale.getDefault().getLanguage().equals("vi")) {
+                    infoUrl += "vi";
+                } else {
+                    infoUrl += "en";
+                }
 
-                if (source == null) {
+                String infoJson = NetUtils.getHtml(infoUrl);
+
+                if (infoJson == null) {
                     return null;
                 }
 
-                String urls;
                 JSONObject root;
                 try {
-                    root = new JSONObject(source);
-                    urls = root.getString("bio");
+                    root = new JSONObject(infoJson);
+                    keyUrl = root.getString("key_url");
+
+                    versionCode = root.getString("version_code");
+                    lqmbPackageName = root.getString("lqmb_package_name");
+                    lqmbVersionName = root.getString("lqmb_version_name");
+                    msgUpdate = root.getString("msg_update");
+                    msgNotActivated = root.getString("msg_not_activated");
+                    msgActivated = root.getString("msg_activated");
+                    imageUrl1 = root.getString("image_url1");
+                    url1 = root.getString("url1");
+                    imageUrl2 = root.getString("image_url2");
+                    url2 = root.getString("url2");
                 } catch (JSONException e) {
                     Log.e(TAG, e.toString());
                     return null;
                 }
 
-                String[] urlArr = urls.split(System.getProperty("line.separator"));
-                result = NetUtils.getHtml(urlArr[0]);
-                result += NetUtils.getHtml(urlArr[1]);
+                result = NetUtils.getHtml(keyUrl + key);
 
-                String data = result.split("end")[0];
-                String[] lines = data.split(System.getProperty("line.separator"));
-                String info;
-                if (Locale.getDefault().getLanguage().equals("vi")) {
-                    info = lines[1];
-                } else {
-                    info = lines[0];
-                }
-
-                String[] infoArr = info.split(Pattern.quote("|"));
-                versionCode = infoArr[0];
-                lqmbVersionCode = infoArr[1];
-                textUpdate = infoArr[2];
-                textNotActivated = infoArr[3];
-                textActivated = infoArr[4];
-                url1 = infoArr[5];
-                url2 = infoArr[6];
-                imageUrl1 = infoArr[7];
-                imageUrl2 = infoArr[8];
             }
 
             return result;
@@ -334,18 +336,26 @@ public class ActivationFragment extends Fragment implements View.OnClickListener
                 ivFacebook2.setVisibility(View.GONE);
                 btnSend1.setVisibility(View.INVISIBLE);
                 btnSend2.setVisibility(View.INVISIBLE);
-                tvInstruction.setText(textUpdate);
+                tvInstruction.setText(msgUpdate);
                 return;
             }
 
-            if (result.contains(code)) {
+            boolean activated = false;
+            JSONObject root;
+            try {
+                root = new JSONObject(result);
+                activated = root.getBoolean("activated");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (activated) {
                 setActivated();
             } else {
-                tvInstruction.setText(textNotActivated);
-                ivFacebook1.setVisibility(View.VISIBLE);
-                ivFacebook2.setVisibility(View.VISIBLE);
-                btnSend1.setVisibility(View.VISIBLE);
-                btnSend2.setVisibility(View.VISIBLE);
+                tvInstruction.setText(msgNotActivated);
+                ivFacebook1.setVisibility(View.GONE);
+                ivFacebook2.setVisibility(View.GONE);
+                btnSend1.setVisibility(View.GONE);
+                btnSend2.setVisibility(View.GONE);
                 loadImageFromURL();
             }
         }

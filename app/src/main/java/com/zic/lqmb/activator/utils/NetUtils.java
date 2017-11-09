@@ -12,10 +12,13 @@ import okhttp3.Response;
 public class NetUtils {
 
     private static final String TAG = "NetUtils";
+    private static final int TIMEOUT_MIN = 2;
 
     public static String getHtml(String url) {
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(15000, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT_MIN, TimeUnit.MINUTES)
+                .readTimeout(TIMEOUT_MIN, TimeUnit.MINUTES)
+                .writeTimeout(TIMEOUT_MIN, TimeUnit.MINUTES)
                 .retryOnConnectionFailure(true)
                 .build();
 
@@ -26,12 +29,15 @@ public class NetUtils {
         Response response;
         try {
             response = client.newCall(request).execute();
-            if (response.isSuccessful()) {
-                return response.body().string();
-            } else {
-                Log.e(TAG, "GetHtml: " + "Unexpected code " + response);
-                Log.e(TAG, "GetHtml: " + "Response Body " + request.body().toString());
-            }
+
+            String body = response.body().string();
+            return body;
+//            if (response.isSuccessful()) {
+//                return body;
+//            } else {
+//                Log.e(TAG, "GetHtml: " + "Unexpected code " + response);
+//                Log.e(TAG, "GetHtml: " + "Response Body " + body);
+//            }
         } catch (IOException e) {
             Log.e(TAG, "GetHtml: " + e.toString());
         }

@@ -40,4 +40,10 @@
     <string name="toast_not_activated">Mã ZKey của bạn chưa được kích hoạt!</string>
     <string name="item_contact">Liên hệ tác giả</string>
     <string name="toast_not_valid_version">Phiên bản LQMB mod này không hợp lệ, Xin hãy tải về phiên bản LQMB mod mới nhất!</string>
+    <string name="hint_card">Mã thẻ</string>
+    <string name="btn_pay">Thanh toán</string>
+    <string name="hint_serial">Số sê-ri</string>
+    <string name="title_payment">Thanh toán</string>
+    <string name="dialog_content_processing">Đang xử lý...</string>
+    <string name="tv_card_info">Chú ý: chỉ chấp nhận thẻ 50k để thanh toán!</string>
 </resources>

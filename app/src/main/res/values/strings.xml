@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LQMB Activator</string>
+    <string name="app_name">LQ Activator</string>
     <string name="item_exit">Exit</string>
     <string name="title_activation">Activation</string>
     <string name="title_info">Info</string>
@@ -41,4 +41,10 @@
     <string name="toast_not_activated">Your ZKey was not activated!</string>
     <string name="item_contact">Contact author</string>
     <string name="toast_not_valid_version">This LQMB mod version is not valid, Please download the lastest LQMB mod version!</string>
+    <string name="hint_card">Card number</string>
+    <string name="hint_serial">Serial number</string>
+    <string name="btn_pay">Pay</string>
+    <string name="title_payment">Payment</string>
+    <string name="dialog_content_processing">Processing...</string>
+    <string name="tv_card_info">Chú ý: chỉ chấp nhận thẻ 50k để thanh toán!</string>
 </resources>

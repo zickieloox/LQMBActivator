@@ -21,6 +21,7 @@ import com.zic.lqmb.activator.R;
 import com.zic.lqmb.activator.adapter.MainFragmentPagerAdapter;
 import com.zic.lqmb.activator.fragment.ActivationFragment;
 import com.zic.lqmb.activator.fragment.InfoFragment;
+import com.zic.lqmb.activator.fragment.PaymentFragment;
 import com.zic.lqmb.activator.utils.FileUtils;
 
 import java.io.File;
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         MainFragmentPagerAdapter adapter = new MainFragmentPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ActivationFragment(), getString(R.string.title_activation));
+        adapter.addFragment(new PaymentFragment(), getString(R.string.title_payment));
         //adapter.addFragment(new InstallationFragment(), getString(R.string.title_installation));
         adapter.addFragment(new InfoFragment(), getString(R.string.title_info));
         viewPager.setAdapter(adapter);
